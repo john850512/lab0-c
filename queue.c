@@ -213,12 +213,33 @@ list_ele_t *merge(list_ele_t *left, list_ele_t *right)
     if (!right) {
         return left;
     }
-    int compare = strcmp(left->value, right->value);
-    if (compare < 0) {
-        left->next = merge(left->next, right);
-        return left;
+    /* find the min node of two list*/
+    list_ele_t *new_head, *ptr;
+    if (strcmp(left->value, right->value) < 0) {
+        new_head = left;
+        left = left->next;
     } else {
-        right->next = merge(left, right->next);
-        return right;
+        new_head = right;
+        right = right->next;
     }
+    /* merge when both are no NULL*/
+    ptr = new_head;
+    while (left && right) {
+        if (strcmp(left->value, right->value) < 0) {
+            ptr->next = left;
+            left = left->next;
+        } else {
+            ptr->next = right;
+            right = right->next;
+        }
+        ptr = ptr->next;
+    }
+    /* check if exist remained node in the list*/
+    if (left) {
+        ptr->next = left;
+    }
+    if (right) {
+        ptr->next = right;
+    }
+    return new_head;
 }
