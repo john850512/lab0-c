@@ -175,6 +175,50 @@ void q_reverse(queue_t *q)
  */
 void q_sort(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
+    if (!q || q->size < 2) {
+        return;
+    }
+    q->head = merge_sort(q->head);
+    /* move tail to the end of the list*/
+    while (q->tail->next) {
+        q->tail = q->tail->next;
+    }
+}
+
+list_ele_t *merge_sort(list_ele_t *head)
+{
+    if (!head || !head->next) {
+        return head;
+    }
+    /* find the mid of the list, and split it */
+    list_ele_t *walk_slow = head;
+    list_ele_t *walk_fast = head->next;
+    while (walk_fast->next && walk_fast->next->next) {
+        walk_slow = walk_slow->next;
+        walk_fast = walk_fast->next->next;
+    }
+    walk_fast = walk_slow->next;
+    walk_slow->next = NULL;
+
+    list_ele_t *left = merge_sort(head);
+    list_ele_t *right = merge_sort(walk_fast);
+    return merge(left, right);
+}
+
+list_ele_t *merge(list_ele_t *left, list_ele_t *right)
+{
+    if (!left) {
+        return right;
+    }
+    if (!right) {
+        return left;
+    }
+    int compare = strcmp(left->value, right->value);
+    if (compare < 0) {
+        left->next = merge(left->next, right);
+        return left;
+    } else {
+        right->next = merge(left, right->next);
+        return right;
+    }
 }
